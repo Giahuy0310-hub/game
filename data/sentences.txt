@@ -1,11 +1,60 @@
-easy|hello world
-easy|python is fun
-easy|i love coding
-
-medium|typing speed test is useful
-medium|practice makes perfect
-medium|coding every day improves skills
-
-hard|improving typing accuracy requires consistent effort
-hard|python programming can be very powerful and flexible
-hard|building a complete application requires careful design
+easy|the cat sat on the mat
+easy|I like to eat apples
+easy|the sun is very bright today
+easy|she has a red ball
+easy|my dog runs fast
+easy|he drinks cold water
+easy|we go to school every day
+easy|the bird can fly high
+easy|I see a big blue sky
+easy|mom made some hot soup
+easy|the baby is very cute
+easy|dad reads a book at night
+easy|I love eating fresh fruit
+easy|the fish swims in the lake
+easy|put the cup on the table
+easy|the kids play in the park
+easy|open the door please
+easy|it is a sunny morning
+easy|she likes pink flowers
+easy|the car is very fast
+medium|Python is a popular programming language used by developers worldwide
+medium|learning to type faster can significantly improve your productivity
+medium|the quick brown fox jumps over the lazy dog near the river
+medium|practice makes perfect when it comes to improving your typing speed
+medium|technology has changed the way people communicate with each other
+medium|reading books every day helps expand your vocabulary and knowledge
+medium|the weather forecast shows heavy rain expected throughout the weekend
+medium|she completed all of her assignments before the deadline arrived
+medium|exercise regularly to maintain a healthy body and a clear mind
+medium|the library contains thousands of books on a wide variety of topics
+medium|good communication skills are essential in both work and daily life
+medium|he solved the math problem quickly without using a calculator
+medium|the new software update fixed several bugs reported by the users
+medium|traveling to different countries broadens your perspective on the world
+medium|she prepared a detailed presentation for the morning meeting
+medium|the students worked together to finish the group project on time
+medium|music has the power to change your mood within seconds
+medium|drinking enough water each day keeps your body functioning properly
+medium|the restaurant received excellent reviews for its food and service
+medium|he trained for months before competing in the national championship
+hard|Artificial intelligence is rapidly transforming industries across the globe, from healthcare to finance and beyond.
+hard|The ability to process and analyze large datasets has become a critical skill in today's data-driven economy.
+hard|Quantum computing promises to solve complex problems that traditional computers would take centuries to complete.
+hard|Effective leadership requires not only technical expertise but also strong interpersonal and communication skills.
+hard|The human brain is capable of storing approximately 2.5 petabytes of information throughout a lifetime.
+hard|Climate change poses one of the most significant challenges facing humanity in the twenty-first century.
+hard|Philosophers have debated the nature of consciousness and free will for thousands of years without a definitive answer.
+hard|The global economy is deeply interconnected, meaning that financial crises in one country can quickly spread worldwide.
+hard|Developing robust cybersecurity measures is essential to protecting sensitive data in an increasingly digital world.
+hard|The principles of object-oriented programming include encapsulation, inheritance, polymorphism, and abstraction.
+hard|Neuroscientists have discovered that the brain remains remarkably plastic and adaptable well into adulthood.
+hard|The ethical implications of genetic engineering raise profound questions about the boundaries of scientific progress.
+hard|Mastering a foreign language requires consistent practice, cultural immersion, and a willingness to make mistakes.
+hard|The architecture of ancient civilizations continues to inspire modern engineers and urban planners around the world.
+hard|Renewable energy sources such as solar and wind power are becoming increasingly cost-competitive with fossil fuels.
+hard|The development of the internet fundamentally altered how humans access, share, and consume information globally.
+hard|Psychological resilience refers to the capacity to recover quickly from difficulties and adapt to challenging situations.
+hard|The study of mathematics underpins virtually every field of science, engineering, economics, and technology today.
+hard|Machine learning algorithms improve their performance over time by processing increasingly large amounts of training data.
+hard|The complexity of the human immune system allows the body to defend itself against millions of different pathogens.
