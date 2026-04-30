@@ -1,0 +1,11 @@
+easy|hello world
+easy|python is fun
+easy|i love coding
+
+medium|typing speed test is useful
+medium|practice makes perfect
+medium|coding every day improves skills
+
+hard|improving typing accuracy requires consistent effort
+hard|python programming can be very powerful and flexible
+hard|building a complete application requires careful design
