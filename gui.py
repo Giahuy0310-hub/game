@@ -38,6 +38,7 @@ time_limit   = tk.IntVar(value=60)
 input_var    = tk.StringVar()
 char_labels  = []
 tick_job     = [None]
+input_trace_id = [None]
 
 wpm_lbl = acc_lbl = err_lbl = timer_lbl = progress = input_box = None
 
@@ -151,17 +152,64 @@ def show_game_screen(sentence):
     progress.pack(pady=6)
 
     tf = surface(root, padx=16, pady=14)
-    tf.pack(padx=20, fill="x")
+    tf.pack(padx=20, fill="both", expand=True)
+
     wrap = tk.Frame(tf, bg=SURFACE)
-    wrap.pack()
+    wrap.pack(anchor="w")
+
     char_labels = []
-    for ch in sentence:
-        c = tk.Label(wrap, text=ch, font=MONO, fg=PENDING, bg=SURFACE)
-        c.pack(side="left")
-        char_labels.append(c)
+
+    MAX_COL = 50
+    current_len = 0
+
+    row_frame = tk.Frame(wrap, bg=SURFACE)
+    row_frame.pack(anchor="w")
+
+    words = sentence.split(" ")
+
+    for word_index, word in enumerate(words):
+
+        if current_len + len(word) > MAX_COL:
+
+            row_frame = tk.Frame(wrap, bg=SURFACE)
+            row_frame.pack(anchor="w")
+
+            current_len = 0
+
+        for ch in word:
+
+            c = tk.Label(
+                row_frame,
+                text=ch,
+                font=MONO,
+                fg=PENDING,
+                bg=SURFACE
+            )
+
+            c.pack(side="left")
+
+            char_labels.append(c)
+
+            current_len += 1
+
+        if word_index < len(words) - 1:
+
+            c = tk.Label(
+                row_frame,
+                text=" ",
+                font=MONO,
+                fg=PENDING,
+                bg=SURFACE
+            )
+
+            c.pack(side="left")
+
+            char_labels.append(c)
+
+            current_len += 1
 
     input_var.set("")
-    input_var.trace_add("write", on_type)
+    input_trace_id[0] = input_var.trace_add("write", on_type)
     input_box = tk.Entry(root, textvariable=input_var, font=MONO,
                          bg=SURFACE, fg=TEXT, insertbackground=PRIMARY,
                          relief="flat", width=64)
@@ -215,11 +263,27 @@ def tick():
 
 
 def finish_game():
+
     if tick_job[0]:
         root.after_cancel(tick_job[0])
         tick_job[0] = None
+
+    if input_trace_id[0]:
+        input_var.trace_remove("write", input_trace_id[0])
+        input_trace_id[0] = None
+
+    if input_box:
+        input_box.config(state="disabled")
+
     result = engine.get_result()
-    save_result(result, player_name.get(), level_var.get(), mode_var.get())
+
+    save_result(
+        result,
+        player_name.get(),
+        level_var.get(),
+        mode_var.get()
+    )
+
     show_result_screen(result)
 
 
