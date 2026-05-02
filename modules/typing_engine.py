@@ -9,6 +9,31 @@ _state = {
     "time_limit": None,
 }
 
+def is_completed():
+    return _state["typed_text"] == _state["target_text"]
+
+def get_target_text():
+    return _state["target_text"]
+
+def get_typed_text():
+    return _state["typed_text"]
+
+def update_typed(typed_text):
+
+    if not _state["is_running"]:
+        return
+
+    if is_time_up():
+        return
+
+    if _state["start_time"] is None and typed_text:
+        _state["start_time"] = time.time()
+
+    _state["typed_text"] = typed_text
+
+    if typed_text == _state["target_text"]:
+        end_session()
+        return
 
 def start_session(target_text, time_limit=None):
     _state["target_text"] = target_text
@@ -26,8 +51,12 @@ def end_session():
 
 
 def reset():
-    start_session("", None)
+    _state["target_text"] = ""
+    _state["typed_text"] = ""
+    _state["start_time"] = None
+    _state["end_time"] = None
     _state["is_running"] = False
+    _state["time_limit"] = None
 
 
 def update_typed(typed_text):
@@ -45,6 +74,8 @@ def get_elapsed_time():
         return 0.0
     end = _state["end_time"] if _state["end_time"] else time.time()
     return round(end - _state["start_time"], 2)
+    if elapsed < 1:
+        return 0.0
 
 
 def get_remaining_time():
