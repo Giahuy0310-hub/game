@@ -20,7 +20,12 @@ def _save_scores(scores):
     os.makedirs(os.path.dirname(SCORES_FILE), exist_ok=True)
     with open(SCORES_FILE, "w", encoding="utf-8") as f:
         json.dump(scores, f, ensure_ascii=False, indent=2)
-
+        
+def calculate_accuracy(input_text, target_text):
+    if not target_text: return 0
+    # Tính số ký tự khớp đúng vị trí
+    correct = sum(1 for i, char in enumerate(input_text) if i < len(target_text) and char == target_text[i])
+    return round((correct / len(target_text)) * 100, 2)
 
 def save_result(result, player_name="Player", level="easy", mode="sentence"):
     scores = _load_scores()
@@ -75,7 +80,7 @@ def get_player_stats(player_name):
         "best_wpm": max(all_wpm) if all_wpm else 0,
         "avg_wpm": round(sum(all_wpm) / len(all_wpm), 1) if all_wpm else 0,
         "avg_accuracy": round(sum(all_acc) / len(all_acc), 1) if all_acc else 0,
-        "last_played": history[-1].get("date", ""),
+        "last_played": history[0].get("date", ""),
     }
 
 
