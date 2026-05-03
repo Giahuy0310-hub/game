@@ -51,13 +51,14 @@ def get_leaderboard(top_n=10, level=None):
     if level:
         scores = [s for s in scores if s.get("level") == level]
     completed = [s for s in scores if s.get("completed", False)]
-    return sorted(completed, key=lambda x: x.get("wpm", 0), reverse=True)[:top_n]
+    top = sorted(completed, key=lambda x: x.get("wpm", 0), reverse=True)[:top_n]
+    return sorted(top, key=lambda x: x.get("wpm", 0))
 
 
 def get_player_history(player_name):
     scores = _load_scores()
     history = [s for s in scores if s.get("player") == player_name]
-    return sorted(history, key=lambda x: x.get("wpm", 0))
+    return sorted(history, key=lambda x: x.get("date", ""), reverse=True)
 
 
 def get_player_stats(player_name):

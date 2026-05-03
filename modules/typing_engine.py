@@ -62,9 +62,10 @@ def get_elapsed_time():
     if _state["start_time"] is None:
         return 0.0
     end = _state["end_time"] if _state["end_time"] else time.time()
-    return round(end - _state["start_time"], 2)
+    elapsed = round(end - _state["start_time"], 2)
     if elapsed < 1:
         return 0.0
+    return elapsed
 
 
 def get_remaining_time():
