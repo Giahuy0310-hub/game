@@ -2,7 +2,13 @@ import tkinter as tk
 from tkinter import ttk
 import sys
 import os
+import winsound
 
+def play_sound(is_correct):
+    if is_correct:
+        winsound.Beep(800, 50)  
+    else:
+        winsound.Beep(400, 150) 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from modules.text_engine import load_data, get_challenge
 import modules.typing_engine as engine
@@ -28,7 +34,8 @@ TITLE = ("Segoe UI", 20, "bold")
 root = tk.Tk()
 root.configure(bg=BG)
 root.resizable(True, True)
-root.state("zoomed")
+root.geometry("650x650")
+root.state('zoomed')
 
 data_dict      = load_data()
 player_name    = tk.StringVar(value="Player")
@@ -210,7 +217,11 @@ def show_game_screen(sentence):
                          relief="flat")
     input_box.pack(fill="x", padx=20, pady=14, ipady=8)
     input_box.focus()
-
+    input_box.bind("<Control-v>", lambda e: "break")
+    input_box.bind("<Control-V>", lambda e: "break")
+    root.bind("<Escape>", lambda e: show_menu()) 
+    root.bind("<F5>", lambda e: start_game())     
+    # -----------------------
     tick()
 
 
@@ -218,7 +229,9 @@ def on_type(*_):
     typed = input_var.get()
     engine.update_typed(typed)
     stats = engine.get_realtime_stats()
-
+    if len(typed) > 0:
+         is_correct = stats["char_status"][len(typed)-1]["status"] == "correct"
+         play_sound(is_correct)
     for i, c in enumerate(char_labels):
         if i < len(stats["char_status"]):
             st = stats["char_status"][i]["status"]
