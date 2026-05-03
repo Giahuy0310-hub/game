@@ -10,5 +10,77 @@
     "elapsed_time": 7.62,
     "completed": true,
     "date": "2026-04-30 18:40:23"
+  },
+  {
+    "player": "Player",
+    "level": "medium",
+    "mode": "paragraph",
+    "wpm": 7.6,
+    "cpm": 37.9,
+    "accuracy": 27.5,
+    "errors": 50,
+    "elapsed_time": 30.06,
+    "completed": false,
+    "date": "2026-05-03 11:02:28"
+  },
+  {
+    "player": "Player",
+    "level": "medium",
+    "mode": "sentence",
+    "wpm": 18.4,
+    "cpm": 91.9,
+    "accuracy": 73.0,
+    "errors": 17,
+    "elapsed_time": 30.04,
+    "completed": false,
+    "date": "2026-05-03 11:05:00"
+  },
+  {
+    "player": "Player",
+    "level": "medium",
+    "mode": "sentence",
+    "wpm": 31.8,
+    "cpm": 159.0,
+    "accuracy": 100.0,
+    "errors": 0,
+    "elapsed_time": 26.03,
+    "completed": true,
+    "date": "2026-05-03 11:05:37"
+  },
+  {
+    "player": "Player",
+    "level": "hard",
+    "mode": "sentence",
+    "wpm": 18.4,
+    "cpm": 91.9,
+    "accuracy": 83.6,
+    "errors": 9,
+    "elapsed_time": 30.04,
+    "completed": false,
+    "date": "2026-05-03 11:06:41"
+  },
+  {
+    "player": "Player",
+    "level": "medium",
+    "mode": "sentence",
+    "wpm": 42.2,
+    "cpm": 211.0,
+    "accuracy": 100.0,
+    "errors": 0,
+    "elapsed_time": 18.2,
+    "completed": true,
+    "date": "2026-05-03 11:09:28"
+  },
+  {
+    "player": "Player",
+    "level": "medium",
+    "mode": "paragraph",
+    "wpm": 40.6,
+    "cpm": 202.8,
+    "accuracy": 100.0,
+    "errors": 0,
+    "elapsed_time": 60.06,
+    "completed": true,
+    "date": "2026-05-03 11:33:20"
   }
 ]

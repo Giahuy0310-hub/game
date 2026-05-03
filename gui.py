@@ -10,15 +10,15 @@ from modules.stats_system import save_result, get_leaderboard, get_player_histor
 
 TICK_MS = 100
 
-BG       = "#1e1e2e"
-SURFACE  = "#313244"
-PRIMARY  = "#cba6f7"
-GREEN    = "#a6e3a1"
-RED      = "#f38ba8"
-YELLOW   = "#f9e2af"
-TEXT     = "#cdd6f4"
-SUBTEXT  = "#a6adc8"
-PENDING  = "#585b70"
+BG      = "#1e1e2e"
+SURFACE = "#313244"
+PRIMARY = "#cba6f7"
+GREEN   = "#a6e3a1"
+RED     = "#f38ba8"
+YELLOW  = "#f9e2af"
+TEXT    = "#cdd6f4"
+SUBTEXT = "#a6adc8"
+PENDING = "#585b70"
 
 MONO  = ("Consolas", 14)
 UI    = ("Segoe UI", 11)
@@ -27,25 +27,29 @@ TITLE = ("Segoe UI", 20, "bold")
 
 root = tk.Tk()
 root.configure(bg=BG)
-root.resizable(False, False)
+root.resizable(True, True)
+root.state("zoomed")
 
-data_dict    = load_data()
-player_name  = tk.StringVar(value="Player")
-level_var    = tk.StringVar(value="easy")
-mode_var     = tk.StringVar(value="sentence")
-timed_var    = tk.BooleanVar(value=False)
-time_limit   = tk.IntVar(value=60)
-input_var    = tk.StringVar()
-char_labels  = []
-tick_job     = [None]
+data_dict      = load_data()
+player_name    = tk.StringVar(value="Player")
+level_var      = tk.StringVar(value="easy")
+mode_var       = tk.StringVar(value="sentence")
+timed_var      = tk.BooleanVar(value=False)
+time_limit     = tk.IntVar(value=60)
+input_var      = tk.StringVar()
+char_labels    = []
+tick_job       = [None]
 input_trace_id = [None]
 
 wpm_lbl = acc_lbl = err_lbl = timer_lbl = progress = input_box = None
 
 
 def clear_screen():
-    for w in root.winfo_children():
-        w.destroy()
+    try:
+        for w in root.winfo_children():
+            w.destroy()
+    except tk.TclError:
+        pass
 
 
 def lbl(parent, text, font=None, color=None, **kw):
@@ -68,15 +72,20 @@ def show_menu():
     if tick_job[0]:
         root.after_cancel(tick_job[0])
         tick_job[0] = None
+    if input_trace_id[0]:
+        input_var.trace_remove("write", input_trace_id[0])
+        input_trace_id[0] = None
     engine.reset()
     clear_screen()
     root.title("Typing Speed Game")
-    root.geometry("660x540")
 
-    lbl(root, "⌨  Typing Speed Game", font=TITLE, color=PRIMARY).pack(pady=(30, 4))
-    lbl(root, "Luyện tốc độ gõ phím", color=SUBTEXT).pack()
+    outer = tk.Frame(root, bg=BG)
+    outer.place(relx=0.5, rely=0.5, anchor="center")
 
-    card = surface(root, padx=30, pady=18)
+    lbl(outer, "⌨  Typing Speed Game", font=TITLE, color=PRIMARY).pack(pady=(0, 4))
+    lbl(outer, "Luyện tốc độ gõ phím", color=SUBTEXT).pack()
+
+    card = surface(outer, padx=30, pady=18)
     card.pack(pady=18, padx=40, fill="x")
 
     r1 = tk.Frame(card, bg=SURFACE)
@@ -111,7 +120,7 @@ def show_menu():
                buttonbackground=SURFACE).pack(side="right")
     lbl(r4, "giây", color=SUBTEXT).pack(side="right", padx=4)
 
-    br = tk.Frame(root, bg=BG)
+    br = tk.Frame(outer, bg=BG)
     br.pack(pady=10)
     btn(br, "▶  Bắt đầu", start_game).pack(side="left", padx=8)
     btn(br, "🏆  Bảng xếp hạng", show_leaderboard, color=YELLOW).pack(side="left", padx=8)
@@ -129,7 +138,6 @@ def show_game_screen(sentence):
     global wpm_lbl, acc_lbl, err_lbl, timer_lbl, progress, input_box, char_labels
     clear_screen()
     root.title("Đang chơi...")
-    root.geometry("800x520")
 
     top = tk.Frame(root, bg=BG)
     top.pack(fill="x", padx=20, pady=(14, 0))
@@ -148,72 +156,59 @@ def show_game_screen(sentence):
     err_lbl = lbl(sr, "Lỗi: 0", font=BOLD, color=RED)
     err_lbl.pack(side="left", padx=20)
 
-    progress = ttk.Progressbar(root, length=720, mode="determinate")
-    progress.pack(pady=6)
+    pb_frame = tk.Frame(root, bg=BG)
+    pb_frame.pack(fill="x", padx=20, pady=6)
+    progress = ttk.Progressbar(pb_frame, mode="determinate")
+    progress.pack(fill="x")
 
     tf = surface(root, padx=16, pady=14)
-    tf.pack(padx=20, fill="both", expand=True)
+    tf.pack(padx=20, fill="x")
+
+    root.update_idletasks()
+    _tmp = tk.Label(tf, text="A", font=MONO, bg=SURFACE)
+    _tmp.pack()
+    root.update_idletasks()
+    FONT_W = _tmp.winfo_reqwidth()
+    AREA_W = tf.winfo_width() - 32
+    if AREA_W < 200:
+        AREA_W = root.winfo_width() - 80
+    MAX_COL = max(20, AREA_W // FONT_W)
+    _tmp.destroy()
 
     wrap = tk.Frame(tf, bg=SURFACE)
     wrap.pack(anchor="w")
 
     char_labels = []
-
-    MAX_COL = 50
     current_len = 0
+    words       = sentence.split(" ")
 
     row_frame = tk.Frame(wrap, bg=SURFACE)
     row_frame.pack(anchor="w")
 
-    words = sentence.split(" ")
-
     for word_index, word in enumerate(words):
-
-        if current_len + len(word) > MAX_COL:
-
+        if current_len > 0 and current_len + len(word) > MAX_COL:
             row_frame = tk.Frame(wrap, bg=SURFACE)
             row_frame.pack(anchor="w")
-
             current_len = 0
 
         for ch in word:
-
-            c = tk.Label(
-                row_frame,
-                text=ch,
-                font=MONO,
-                fg=PENDING,
-                bg=SURFACE
-            )
-
+            c = tk.Label(row_frame, text=ch, font=MONO, fg=PENDING, bg=SURFACE)
             c.pack(side="left")
-
             char_labels.append(c)
-
             current_len += 1
 
         if word_index < len(words) - 1:
-
-            c = tk.Label(
-                row_frame,
-                text=" ",
-                font=MONO,
-                fg=PENDING,
-                bg=SURFACE
-            )
-
+            c = tk.Label(row_frame, text=" ", font=MONO, fg=PENDING, bg=SURFACE)
             c.pack(side="left")
-
             char_labels.append(c)
-
             current_len += 1
 
     input_var.set("")
     input_trace_id[0] = input_var.trace_add("write", on_type)
     input_box = tk.Entry(root, textvariable=input_var, font=MONO,
                          bg=SURFACE, fg=TEXT, insertbackground=PRIMARY,
-                         relief="flat", width=64)
-    input_box.pack(pady=14, ipady=8)
+                         relief="flat")
+    input_box.pack(fill="x", padx=20, pady=14, ipady=8)
     input_box.focus()
 
     tick()
@@ -228,10 +223,16 @@ def on_type(*_):
         if i < len(stats["char_status"]):
             st = stats["char_status"][i]["status"]
             color = GREEN if st == "correct" else (RED if st == "wrong" else PENDING)
-            c.config(fg=color)
+            try:
+                c.config(fg=color)
+            except tk.TclError:
+                return
 
-    pct = (len(typed) / max(1, len(engine._state["target_text"]))) * 100
-    progress["value"] = min(pct, 100)
+    try:
+        pct = (len(typed) / max(1, len(engine._state["target_text"]))) * 100
+        progress["value"] = min(pct, 100)
+    except tk.TclError:
+        return
 
     if not stats["is_running"]:
         finish_game()
@@ -263,49 +264,44 @@ def tick():
 
 
 def finish_game():
-
     if tick_job[0]:
         root.after_cancel(tick_job[0])
         tick_job[0] = None
-
     if input_trace_id[0]:
         input_var.trace_remove("write", input_trace_id[0])
         input_trace_id[0] = None
-
     if input_box:
-        input_box.config(state="disabled")
+        try:
+            input_box.config(state="disabled")
+        except tk.TclError:
+            pass
 
     result = engine.get_result()
-
-    save_result(
-        result,
-        player_name.get(),
-        level_var.get(),
-        mode_var.get()
-    )
-
+    save_result(result, player_name.get(), level_var.get(), mode_var.get())
     show_result_screen(result)
 
 
 def show_result_screen(result):
     clear_screen()
-    root.geometry("500x440")
     root.title("Kết quả")
+
+    outer = tk.Frame(root, bg=BG)
+    outer.place(relx=0.5, rely=0.5, anchor="center")
 
     completed = result.get("completed", False)
     title_txt = "✅  Hoàn thành!" if completed else "⏰  Hết giờ!"
     color = GREEN if completed else YELLOW
-    lbl(root, title_txt, font=TITLE, color=color).pack(pady=(28, 6))
+    lbl(outer, title_txt, font=TITLE, color=color).pack(pady=(0, 6))
 
-    card = surface(root, padx=30, pady=20)
-    card.pack(padx=40, pady=10, fill="x")
+    card = surface(outer, padx=40, pady=20)
+    card.pack(pady=10, fill="x")
 
     rows = [
-        ("WPM",       str(result["wpm"]),             PRIMARY),
-        ("CPM",       str(result["cpm"]),              PRIMARY),
-        ("Accuracy",  f"{result['accuracy']}%",        GREEN),
-        ("Lỗi",       str(result["errors"]),           RED),
-        ("Thời gian", f"{result['elapsed_time']}s",   YELLOW),
+        ("WPM",       str(result["wpm"]),           PRIMARY),
+        ("CPM",       str(result["cpm"]),            PRIMARY),
+        ("Accuracy",  f"{result['accuracy']}%",      GREEN),
+        ("Lỗi",       str(result["errors"]),         RED),
+        ("Thời gian", f"{result['elapsed_time']}s", YELLOW),
     ]
     for label, val, col in rows:
         r = tk.Frame(card, bg=SURFACE)
@@ -313,7 +309,7 @@ def show_result_screen(result):
         lbl(r, label, color=SUBTEXT).pack(side="left")
         tk.Label(r, text=val, font=BOLD, fg=col, bg=SURFACE).pack(side="right")
 
-    br = tk.Frame(root, bg=BG)
+    br = tk.Frame(outer, bg=BG)
     br.pack(pady=16)
     btn(br, "🔁  Chơi lại", start_game).pack(side="left", padx=8)
     btn(br, "🏠  Menu", show_menu, color=SUBTEXT).pack(side="left", padx=8)
@@ -322,7 +318,6 @@ def show_result_screen(result):
 
 def show_leaderboard():
     clear_screen()
-    root.geometry("640x500")
     root.title("Bảng xếp hạng")
 
     lbl(root, "🏆  Bảng Xếp Hạng", font=TITLE, color=YELLOW).pack(pady=(22, 4))
@@ -354,11 +349,11 @@ def show_leaderboard():
     style.configure("Treeview.Heading", background=BG, foreground=PRIMARY, font=BOLD)
 
     cols = ("#", "Người chơi", "Level", "WPM", "Accuracy", "Ngày")
-    tree = ttk.Treeview(root, columns=cols, show="headings", height=12)
-    for col, w in zip(cols, [40, 150, 80, 80, 90, 110]):
+    tree = ttk.Treeview(root, columns=cols, show="headings", height=15)
+    for col, w in zip(cols, [40, 200, 100, 100, 110, 140]):
         tree.heading(col, text=col)
         tree.column(col, width=w, anchor="center")
-    tree.pack(padx=20, pady=10, fill="x")
+    tree.pack(padx=40, pady=10, fill="x")
     refresh()
 
     btn(root, "← Quay lại", show_menu, color=SUBTEXT).pack(pady=6)
@@ -366,7 +361,6 @@ def show_leaderboard():
 
 def show_history():
     clear_screen()
-    root.geometry("680x520")
     root.title("Lịch sử")
 
     name = player_name.get()
@@ -375,13 +369,13 @@ def show_history():
     stats = get_player_stats(name)
     if stats:
         sf = surface(root, padx=20, pady=10)
-        sf.pack(padx=30, fill="x")
+        sf.pack(padx=40, fill="x")
         info_rows = [
-            ("Tổng phiên", stats["total_sessions"]),
-            ("Hoàn thành", stats["completed_sessions"]),
-            ("WPM tốt nhất", stats["best_wpm"]),
+            ("Tổng phiên",     stats["total_sessions"]),
+            ("Hoàn thành",     stats["completed_sessions"]),
+            ("WPM tốt nhất",   stats["best_wpm"]),
             ("WPM trung bình", stats["avg_wpm"]),
-            ("Accuracy TB", f"{stats['avg_accuracy']}%"),
+            ("Accuracy TB",    f"{stats['avg_accuracy']}%"),
         ]
         row_frame = tk.Frame(sf, bg=SURFACE)
         row_frame.pack()
@@ -396,11 +390,11 @@ def show_history():
     style.configure("Treeview.Heading", background=BG, foreground=PRIMARY, font=BOLD)
 
     cols = ("#", "Level", "WPM", "CPM", "Accuracy", "Lỗi", "TG(s)", "Ngày")
-    tree = ttk.Treeview(root, columns=cols, show="headings", height=12)
-    for col, w in zip(cols, [35, 70, 70, 70, 80, 50, 60, 120]):
+    tree = ttk.Treeview(root, columns=cols, show="headings", height=15)
+    for col, w in zip(cols, [40, 90, 90, 90, 100, 70, 80, 150]):
         tree.heading(col, text=col)
         tree.column(col, width=w, anchor="center")
-    tree.pack(padx=20, pady=8, fill="x")
+    tree.pack(padx=40, pady=8, fill="x")
 
     history = get_player_history(name)
     for i, e in enumerate(history, 1):
