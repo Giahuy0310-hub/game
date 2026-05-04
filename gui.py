@@ -2,13 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import sys
 import os
-import winsound
-
-def play_sound(is_correct):
-    if is_correct:
-        winsound.Beep(800, 50)  
-    else:
-        winsound.Beep(400, 150) 
+ 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from modules.text_engine import load_data, get_challenge
 import modules.typing_engine as engine
@@ -31,11 +25,14 @@ UI    = ("Segoe UI", 11)
 BOLD  = ("Segoe UI", 13, "bold")
 TITLE = ("Segoe UI", 20, "bold")
 
+lang_var = tk.StringVar(value="vi")
+
 root = tk.Tk()
 root.configure(bg=BG)
 root.resizable(True, True)
 root.geometry("650x650")
 root.state('zoomed')
+
 
 data_dict      = load_data()
 player_name    = tk.StringVar(value="Player")
@@ -85,6 +82,7 @@ def show_menu():
     engine.reset()
     clear_screen()
     root.title("Typing Speed Game")
+    
 
     outer = tk.Frame(root, bg=BG)
     outer.place(relx=0.5, rely=0.5, anchor="center")
@@ -133,14 +131,48 @@ def show_menu():
     btn(br, "🏆  Bảng xếp hạng", show_leaderboard, color=YELLOW).pack(side="left", padx=8)
     btn(br, "📊  Lịch sử của tôi", show_history, color=GREEN).pack(side="left", padx=8)
 
+    global lang_var
 
-def start_game():
+    lang_var = tk.StringVar(value="en")
+
+    card = tk.Frame(root, bg=SURFACE)
+    card.pack(pady=50)
+
+
+    r_lang = tk.Frame(root, bg=SURFACE)
+    r_lang.pack(pady=10)
+
+
+    r_lang = tk.Frame(card, bg=SURFACE)
+    r_lang.pack(fill="x", pady=6)
+    lbl(r_lang, "Ngôn ngữ:", color=SUBTEXT).pack(side="left")
+    for val, txt in [("en", "English"), ("vi", "Tiếng Việt"),]:
+        tk.Radiobutton(r_lang, text=txt, variable=lang_var, value=val,
+                       bg=SURFACE, fg=TEXT, selectcolor=BG,
+                       activebackground=SURFACE, font=UI).pack(side="left", padx=10, pady=5)
+
+     
+def start_game(): 
+    global data_dict
+    import shutil
+    import os
+    from modules.text_engine import load_data
+
+    if lang_var.get() == "vi":
+        source = "data/vietnamese.txt"
+    else:
+        source = "data/sentences.txt"
+
+        if os.path.exists(source):
+         shutil.copy(source, "data/sentences.txt")
+         data_dict = load_data()
+    
+    
     sentence = get_challenge(data_dict, level_var.get(), mode_var.get())
     limit = time_limit.get() if timed_var.get() else None
     engine.start_session(sentence, time_limit=limit)
     show_game_screen(sentence)
-
-
+   
 def show_game_screen(sentence):
     global wpm_lbl, acc_lbl, err_lbl, timer_lbl, progress, input_box, char_labels
     clear_screen()
@@ -229,9 +261,7 @@ def on_type(*_):
     typed = input_var.get()
     engine.update_typed(typed)
     stats = engine.get_realtime_stats()
-    if len(typed) > 0:
-         is_correct = stats["char_status"][len(typed)-1]["status"] == "correct"
-         play_sound(is_correct)
+    
     for i, c in enumerate(char_labels):
         if i < len(stats["char_status"]):
             st = stats["char_status"][i]["status"]
