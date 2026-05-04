@@ -75,7 +75,7 @@ def get_player_stats(player_name):
         "best_wpm": max(all_wpm) if all_wpm else 0,
         "avg_wpm": round(sum(all_wpm) / len(all_wpm), 1) if all_wpm else 0,
         "avg_accuracy": round(sum(all_acc) / len(all_acc), 1) if all_acc else 0,
-        "last_played": history[-1].get("date", ""),
+        "last_played": history[0].get("date", ""),
     }
 
 
