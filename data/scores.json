@@ -82,5 +82,41 @@
     "elapsed_time": 60.06,
     "completed": true,
     "date": "2026-05-03 11:33:20"
+  },
+  {
+    "player": "Player",
+    "level": "easy",
+    "mode": "sentence",
+    "wpm": 31.9,
+    "cpm": 159.6,
+    "accuracy": 100.0,
+    "errors": 0,
+    "elapsed_time": 7.52,
+    "completed": true,
+    "date": "2026-05-05 17:18:31"
+  },
+  {
+    "player": "Player",
+    "level": "medium",
+    "mode": "sentence",
+    "wpm": 25.6,
+    "cpm": 128.0,
+    "accuracy": 100.0,
+    "errors": 0,
+    "elapsed_time": 25.32,
+    "completed": true,
+    "date": "2026-05-05 17:19:55"
+  },
+  {
+    "player": "Player",
+    "level": "easy",
+    "mode": "sentence",
+    "wpm": 36.6,
+    "cpm": 182.9,
+    "accuracy": 100.0,
+    "errors": 0,
+    "elapsed_time": 6.89,
+    "completed": true,
+    "date": "2026-05-05 17:23:42"
   }
 ]

@@ -350,7 +350,7 @@ def show_leaderboard():
         board = get_leaderboard(top_n=15, level=lv)
         for row in tree.get_children():
             tree.delete(row)
-        for i, e in enumerate(board, 1):
+        for i, e in enumerate(board or [], 1):
             tree.insert("", "end", values=(
                 i, e["player"], e["level"].upper(),
                 e["wpm"], f"{e['accuracy']}%", e["date"][:10]

@@ -52,6 +52,7 @@ def get_leaderboard(top_n=10, level=None):
         scores = [s for s in scores if s.get("level") == level]
     completed = [s for s in scores if s.get("completed", False)]
     top = sorted(completed, key=lambda x: x.get("wpm", 0), reverse=True)[:top_n]
+    return top
 
 
 def get_player_history(player_name):
